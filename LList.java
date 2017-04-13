@@ -60,9 +60,10 @@ public class LList{
 	}
 	
 	public void print(){
-		ListNode temp = curr;	//keep curr
 		
 		curr = head;
+		
+		System.out.printf("%-12s", "List: ");
 		for(int i = 0; i < size; i++){
 			System.out.print(curr.next.element + " ");
 			curr = curr.next;
@@ -70,13 +71,12 @@ public class LList{
 		System.out.println();
 		
 		curr = head;
+		System.out.printf("%-12s", "Frequency: ");
 		for(int i = 0; i < size; i++){
 			System.out.print(curr.next.freq + " ");
 			curr = curr.next;
 		}
-		System.out.println();
-		
-		curr = temp;	//restore curr
+		System.out.println("\n");
 	}
 	
 	public int getValue(){
@@ -88,7 +88,6 @@ public class LList{
 	}
 	
 	public void accessCount(int data){
-		ListNode temp = curr;	//keep curr
 		
 		curr = head;
 		for(int i = 0; i < getLength(); i++){
@@ -99,19 +98,19 @@ public class LList{
 			}
 			curr = curr.next;	
 		}
-		//System.out.println(getValue());
 		
-		ListNode t = curr.next;	//store the node that needed to move
-		
+		ListNode t = curr.next;		//store the node that needed to move
 		ListNode t2 = curr;
 		
 		curr = head;
-		
 		for(int i = 0; i < getLength(); i++){
+			
+			//check if its itself
 			if(t == curr.next)
 				break;
+			
+			//check where to insert based on frequency
 			if(t.freq > curr.next.freq){
-				//insert
 				t2.next = t.next;
 				t.next = curr.next;
 				curr.next = t;
@@ -119,10 +118,47 @@ public class LList{
 			}
 			curr = curr.next;
 		}
+	}
+	
+	public void accessMTF(int data){
 		
+		curr = head;
+		ListNode t;
+		for(int i = 0; i < getLength(); i++){
+			compCount++;
+			if(data == curr.next.element){
+				t = curr.next;
+				curr.next = t.next;
+				t.next = head.next;
+				head.next = t;
+				break;
+			}
+			curr = curr.next;
+		}
+	}
+	
+	public void accessTranspose(int data){
 		
-		
-		curr = temp;	//restore curr
+		ListNode temp;
+		curr = head;
+		for(int i = 0; i < getLength(); i++){
+			
+			if(data == curr.next.element){
+				if(curr == head) 	//no swap if access first node
+					break;
+				
+				temp = curr.next;
+				curr.next = temp.next;
+				temp.next = curr;
+				
+				ListNode temp2 = head;
+				while(temp2.next != curr)
+					temp2 = temp2.next;
+				temp2.next = temp;
+				break;
+			}	
+			curr = curr.next;
+		}
 	}
 	
 }
