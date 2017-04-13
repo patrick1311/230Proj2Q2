@@ -7,19 +7,38 @@ public class Main {
 		
 		LList list = new LList();
 		int input = 0;
+		int listOption = 0;
 		
-		while(input != 7){
+		
+		for(int i = 1; i <= 10; i++)
+			list.append(i);
+
+		list.print();
+		list.accessCount(8);
+		list.print();
+		/*
+		while(input != -1){
+			System.out.print("Access data: ");
+			input = in.nextInt();
+			list.accessCount(input);
+		}
+
+		/*
+		while(option != 8){
+			
+			
 			System.out.println("1. Append");
 			System.out.println("2. Insert");
 			System.out.println("3. Next");
-			System.out.println("4. Print");
-			System.out.println("5. Move to start");
-			System.out.println("6. List length");
-			System.out.println("7. Exit");
+			System.out.println("4. Get current position");
+			System.out.println("5. Print list");
+			System.out.println("6. Move to start");
+			System.out.println("7. List length");
+			System.out.println("8. Exit");
 			System.out.print("Enter your choice: ");
-			input = in.nextInt();
+			option = in.nextInt();
 			
-			switch(input){
+			switch(option){
 				case 1:
 					System.out.print("Enter data to append: ");
 					list.append(in.nextInt());
@@ -31,40 +50,28 @@ public class Main {
 				case 3:
 					list.next();
 					break;
-				case 4:
-					list.print();
+				case 4: 
+					System.out.println("Current position: " + list.getCurrPos());
 					break;
 				case 5:
-					list.moveToStart();
+					list.print();
 					break;
 				case 6:
-					System.out.println("List size: " + list.getLength());
+					list.moveToStart();
 					break;
 				case 7:
+					System.out.println("List size: " + list.getLength());
+					break;
+				case 8:
 					System.out.println("Program Terminated!");
 					break;
 				default:
 					System.out.println("Invalid! Choose again.");
 					break;
-
 			}
-				
-			
-			
 		}
+		*/
 		
-		/*
-		list.append(4);
-		list.append(0);
-		list.append(2);
-		list.insert(1);
-		list.next();
-		list.insert(10);
-		list.next();
-		list.next();
-		list.insert(5);
-		list.print();
-		System.out.println();
-		System.out.println("size is " + list.getLength());*/
+		in.close();
 	}
 }
