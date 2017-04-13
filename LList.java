@@ -41,6 +41,7 @@ public class LList{
 		ListNode temp = head;
 		while(temp.next != curr)
 			temp = temp.next;
+		
 		curr = temp;
 	}
 	
@@ -68,6 +69,13 @@ public class LList{
 		}	
 		System.out.println();
 		
+		curr = head;
+		for(int i = 0; i < size; i++){
+			System.out.print(curr.next.freq + " ");
+			curr = curr.next;
+		}
+		System.out.println();
+		
 		curr = temp;	//restore curr
 	}
 	
@@ -84,29 +92,37 @@ public class LList{
 		
 		curr = head;
 		for(int i = 0; i < getLength(); i++){
-			//curr = curr.next;
-			if(data == curr.next.element){
-				curr.freq++;
-			}
-			curr = curr.next;
 			compCount++;
+			if(data == curr.next.element){
+				curr.next.freq++;
+				break;
+			}
+			curr = curr.next;	
 		}
-		prev();
+		//System.out.println(getValue());
 		
+		ListNode t = curr.next;	//store the node that needed to move
 		
-		ListNode temp2 = head;	//reset to starting point
-		ListNode temp3 = curr.next;
+		ListNode t2 = curr;
+		
+		curr = head;
 		
 		for(int i = 0; i < getLength(); i++){
-			temp2 = temp2.next;
-			if(temp2.next.freq < temp2.freq){
-				
-				curr.next = curr.next.next;
-				temp3.next = temp2.next;
-				temp2.next = temp3;
+			if(t == curr.next)
+				break;
+			if(t.freq > curr.next.freq){
+				//insert
+				t2.next = t.next;
+				t.next = curr.next;
+				curr.next = t;
+				break;
 			}
+			curr = curr.next;
 		}
+		
+		
 		
 		curr = temp;	//restore curr
 	}
+	
 }

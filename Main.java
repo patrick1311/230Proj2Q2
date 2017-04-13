@@ -14,7 +14,27 @@ public class Main {
 			list.append(i);
 
 		list.print();
+		System.out.println();
+
 		list.accessCount(8);
+		list.print();
+		list.accessCount(8);
+		list.print();
+		list.accessCount(8);
+		list.print();
+		list.accessCount(1);
+		list.print();
+		list.accessCount(1);
+		list.print();
+		list.accessCount(9);
+		list.print();
+
+		//System.out.println(list.getValue());
+		//list.print();
+		
+		
+		/*System.out.println();
+		list.accessCount(10);
 		list.print();
 		/*
 		while(input != -1){
