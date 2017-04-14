@@ -11,7 +11,7 @@
 
 int THRESHOLD2 = 8;
 
-void genRandFile();
+void genRandFile(int lines);
 void genRandFile2(int lines);
 template<typename E> void fillArrAsc(E a[], int size);
 template<typename E> void shuffleArr(E a[], int size);
@@ -26,12 +26,12 @@ template<typename E> void multiMrg(int buffSize);
 int main()
 {
 	srand((unsigned)time(0));
-	int bufferSize = 15, heapSize = 15;
+	int bufferSize = 7, heapSize = 7;
 	std::streamoff start;
 
 	std::string *heapArr = new std::string[heapSize];
 	clearData();	//clear output file
-	genRandFile2(heapSize + (bufferSize * 1));	//generate input file
+	genRandFile(heapSize + (bufferSize * 2));	//generate input file
 	start = readData(heapArr, 0, heapSize);	//read data into heap array
 	heap<std::string, Comp<std::string>>* minHeap = new heap<std::string, Comp<std::string>>(heapArr, heapSize, heapSize);
 		std::cout << "heap___________________________________" << std::endl;
@@ -41,19 +41,19 @@ int main()
 		std::cout << "heap___________________________________" << std::endl;
 		printArr(heapArr, heapSize);
 	//writeData(heapArr, heapSize);
-	multiMrg<std::string>(heapSize + (bufferSize * 1));
+	multiMrg<std::string>(heapSize + (bufferSize * 2));
 
 	std::string wait;
 	std::cin >> wait;	//Pause console after program finishes
 	return 0;
 }
 
-void genRandFile()
+void genRandFile(int lines)
 {
 	std::ofstream ofs;
 	ofs.open("Random Data.txt");
 
-	int randLines = 85;//(rand() % 100) + 60;
+	int randLines = lines;//(rand() % 100) + 60;
 	int randLength, maxLength = 20;
 	char randChar;
 	for (int i = 0; i < randLines; i++)
@@ -170,7 +170,7 @@ void repSel(heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
 	E *outBuff = new E[buffSize];
 	int heapSize = minHeap->size();
 
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		std::cout << "start" << start << std::endl;
 		start = readData(inBuff, start, buffSize);
@@ -200,10 +200,10 @@ void repSel(heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
 		}
 		//writeData(outBuff, buffSize);
 
-		//std::cout << "in___________________________________" << std::endl;
-		//printArr(inBuff, buffSize);
-		//std::cout << "out___________________________________" << std::endl;
-		//printArr(outBuff, buffSize);
+		std::cout << "in___________________________________" << std::endl;
+		printArr(inBuff, buffSize);
+		std::cout << "out___________________________________" << std::endl;
+		printArr(outBuff, buffSize);
 	}
 	delete[] inBuff;
 	delete[] outBuff;
