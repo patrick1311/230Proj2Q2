@@ -26,7 +26,7 @@ template<typename E> void multiMrg(int buffSize);
 int main()
 {
 	srand((unsigned)time(0));
-	int bufferSize = 7, heapSize = 7;
+	int bufferSize = 15, heapSize = 15;
 	std::streamoff start;
 
 	std::string *heapArr = new std::string[heapSize];
@@ -40,8 +40,8 @@ int main()
 	qsortO(heapArr, heapSize);
 		std::cout << "heap___________________________________" << std::endl;
 		printArr(heapArr, heapSize);
-	writeData(heapArr, heapSize);
-	//multiMrg<std::string>(heapSize + (bufferSize * 2));
+	//writeData(heapArr, heapSize);
+	multiMrg<std::string>(heapSize + (bufferSize * 1));
 
 	std::string wait;
 	std::cin >> wait;	//Pause console after program finishes
@@ -175,9 +175,6 @@ void repSel(heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
 		std::cout << "start" << start << std::endl;
 		start = readData(inBuff, start, buffSize);
 		std::cout << "start" << start << std::endl;
-		//std::cout << "inBuff_______________________" << std::endl;
-		//printArr(inBuff, buffSize);
-		//std::cout << "inBuff_______________________" << std::endl;
 		for (int j = 0; j < buffSize; j++)
 		{
 
@@ -185,36 +182,28 @@ void repSel(heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
 			{
 				minHeap->setHeapSize(heapSize);
 				minHeap->buildHeap();
-				//std::cout << "buildHeap_______________________" << std::endl;
 			}
 
 			outBuff[j] = minHeap->getVal(0);	//send root to heap buffer
-			//std::cout << "outBuff_______________________" << outBuff[j] << std::endl;
+			minHeap->setVal(0, inBuff[j]);
 			if (inBuff[j] > outBuff[j])
 			{
-				minHeap->setVal(0, inBuff[j]);
 				minHeap->siftdown(0);	//siftdown root
-				//std::cout << "heap_______________________" << std::endl;
-				//printHeap(minHeap, buffSize);
-				//std::cout << "heap_______________________" << std::endl;
-				//std::cout << minHeap->size() << "size_______________________" << std::endl;
+				std::cout << minHeap->size() << "size_______________________" << std::endl;
 
 			}
 			else
 			{
 				minHeap->removefirst();
-				//std::cout << "heap_______________________" << std::endl;
-				//printHeap(minHeap, buffSize);
-				//std::cout << "heap_______________________" << std::endl;
-				//std::cout << minHeap->size() << "size_______________________" << std::endl;
+				std::cout << minHeap->size() << "size_______________________" << std::endl;
 			}
 		}
-		writeData(outBuff, buffSize);
+		//writeData(outBuff, buffSize);
 
-		std::cout << "in___________________________________" << std::endl;
-		printArr(inBuff, buffSize);
-		std::cout << "out___________________________________" << std::endl;
-		printArr(outBuff, buffSize);
+		//std::cout << "in___________________________________" << std::endl;
+		//printArr(inBuff, buffSize);
+		//std::cout << "out___________________________________" << std::endl;
+		//printArr(outBuff, buffSize);
 	}
 	delete[] inBuff;
 	delete[] outBuff;
@@ -228,7 +217,7 @@ void multiMrg(int buffSize)	//Temporarily using quicksort for testing
 
 	qsortO(inBuff, buffSize);
 
-	writeData(inBuff, 0, buffSize);
+	writeData(inBuff, buffSize);
 
 	delete[] inBuff;
 }
