@@ -2,30 +2,28 @@
  * Self organizing list: Count, Move to front, Transpose
  */
 
-import java.util.Scanner;
-
-
 public class Main {
 	public static void main(String args[]){
-		Scanner in = new Scanner(System.in);
 		
-		LList list = new LList();
-	
+		LList listCount = new LList();
+		LList listMTF = new LList();
+		LList listTranspose = new LList();
+		
 		for(int i = 0; i < 10; i++)
-			list.append(i);
+			listTranspose.append(i);
 
-		list.print();
+		listTranspose.print();
 
-		list.accessTranspose(8);
-		list.print();
-		list.accessTranspose(8);
-		list.print();
-		list.accessTranspose(8);
-		list.print();
-		list.accessTranspose(0);
-		list.print();
-		list.accessTranspose(4);
-		list.print();
-		in.close();
+		listTranspose.accessTranspose(8);
+		listTranspose.print();
+		listTranspose.accessTranspose(8);
+		listTranspose.print();
+		listTranspose.accessTranspose(8);
+		listTranspose.print();
+		listTranspose.accessTranspose(0);
+		listTranspose.print();
+		listTranspose.accessTranspose(4);
+		listTranspose.print();
+		System.out.println("Comparison = " + listTranspose.getComp());
 	}
 }

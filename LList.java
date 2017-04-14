@@ -83,10 +83,15 @@ public class LList{
 		return curr.next.element;
 	}
 	
+	public int getComp(){
+		return compCount;
+	}
+	
 	public int getLength(){
 		return size;
 	}
 	
+	//Count self-organizing list
 	public void accessCount(int data){
 		
 		curr = head;
@@ -120,6 +125,7 @@ public class LList{
 		}
 	}
 	
+	//Move to front self-organizing list
 	public void accessMTF(int data){
 		
 		curr = head;
@@ -137,12 +143,13 @@ public class LList{
 		}
 	}
 	
+	//Transpose self-organizing list
 	public void accessTranspose(int data){
 		
 		ListNode temp;
 		curr = head;
 		for(int i = 0; i < getLength(); i++){
-			
+			compCount++;
 			if(data == curr.next.element){
 				if(curr == head) 	//no swap if access first node
 					break;
