@@ -10,6 +10,8 @@
 //#pragma once
 
 int THRESHOLD2 = 8;
+bool done = false;
+int eofSize = 7;
 
 void genRandFile(std::string fileName, int lines);
 void genRandFile2(std::string fileName, int lines);
@@ -26,7 +28,7 @@ template<typename E> void multiMrg(std::string fileName, int buffSize);
 int main()
 {
 	srand((unsigned)time(0));
-	int bufferSize = 7, heapSize = 7;
+	int bufferSize = eofSize, heapSize = 7;
 	std::streamoff start;
 	std::string inputFile = "RandomData.txt", outputFile = "SortedData.txt";
 
@@ -112,8 +114,14 @@ std::streamoff readData(std::string fileName, std::string *inBuff, std::streamof
 	{
 		ifs.seekg(start);
 		//while(!stream.eof())
-		for (int i = 0; i < size && !ifs.eof(); i++)
+		for (int i = 0; i < size; i++)
 		{
+			if (ifs.eof())
+			{
+				eofSize = i;	//record line number of eof
+				done = true;
+				break;	//stop recording into input buffer
+			}
 			//while (getline(ifs, buffer[i]))
 			getline(ifs, inBuff[i]);
 		}
@@ -171,7 +179,7 @@ void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, 
 	E *outBuff = new E[buffSize];
 	int heapSize = minHeap->size();
 
-	for (int i = 0; i < 2; i++)
+	do//for (int i = 0; i < 2; i++)
 	{
 		std::cout << "start" << start << std::endl;
 		start = readData(inFile, inBuff, start, buffSize);
@@ -206,7 +214,7 @@ void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, 
 		printArr(inBuff, buffSize);
 		std::cout << "out___________________________________" << std::endl;
 		printArr(outBuff, buffSize);
-	}
+	} while (!done);
 	delete[] inBuff;
 	delete[] outBuff;
 }
