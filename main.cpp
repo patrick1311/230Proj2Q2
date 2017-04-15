@@ -11,48 +11,50 @@
 
 int THRESHOLD2 = 8;
 bool done = false;
+int eofSize = 7;
 
-void genRandFile(int lines);
-void genRandFile2(int lines);
+void genRandFile(std::string fileName, int lines);
+void genRandFile2(std::string fileName, int lines);
 template<typename E> void fillArrAsc(E a[], int size);
 template<typename E> void shuffleArr(E a[], int size);
-std::streamoff readData(std::string *inBuff, std::streamoff start, int size);
+std::streamoff readData(std::string fileName, std::string *inBuff, std::streamoff start, int size);
 template<typename E> void printArr(E a[], int size);
 template<typename E> void printHeap(heap<E, Comp<E>>* heap, int size);
-template<typename E> void repSel(heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize);
-void clearData();
-void writeData(std::string *outBuff, int size);
-template<typename E> void multiMrg(int buffSize);
+template<typename E> void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize);
+void clearData(std::string fileName);
+void writeData(std::string fileName, std::string *outBuff, int size);
+template<typename E> void multiMrg(std::string fileName, int buffSize);
 
 int main()
 {
 	srand((unsigned)time(0));
-	int bufferSize = 7, heapSize = 7;
+	int bufferSize = eofSize, heapSize = 7;
 	std::streamoff start;
+	std::string inputFile = "RandomData.txt", outputFile = "SortedData.txt";
 
 	std::string *heapArr = new std::string[heapSize];
-	clearData();	//clear output file
-	genRandFile(heapSize + (bufferSize + 2));	//generate input file
-	start = readData(heapArr, 0, heapSize);	//read data into heap array
+	clearData(outputFile);	//clear output file
+	genRandFile(inputFile, heapSize + (bufferSize + 2));	//generate input file
+	start = readData(inputFile, heapArr, 0, heapSize);	//read data into heap array
 	heap<std::string, Comp<std::string>>* minHeap = new heap<std::string, Comp<std::string>>(heapArr, heapSize, heapSize);
 	std::cout << "heap___________________________________" << std::endl;
 	printArr(heapArr, heapSize);
-	repSel<std::string>(minHeap, start, bufferSize);
+	repSel<std::string>(inputFile, outputFile, minHeap, start, bufferSize);
 	qsortO(heapArr, heapSize);
 	std::cout << "heap___________________________________" << std::endl;
 	printArr(heapArr, heapSize);
-	//writeData(heapArr, heapSize);
-	multiMrg<std::string>(heapSize + (bufferSize + 2));
+	writeData(outputFile, heapArr, heapSize);	//write array to output file
+	//multiMrg<std::string>(outputFile, heapSize + (bufferSize * 2));
 
 	std::string wait;
 	std::cin >> wait;	//Pause console after program finishes
 	return 0;
 }
 
-void genRandFile(int lines)
+void genRandFile(std::string fileName, int lines)
 {
 	std::ofstream ofs;
-	ofs.open("Random Data.txt");
+	ofs.open(fileName);
 
 	int randLines = lines;//(rand() % 100) + 60;
 	int randLength, maxLength = 20;
@@ -70,10 +72,10 @@ void genRandFile(int lines)
 	ofs.close();
 }
 
-void genRandFile2(int lines)
+void genRandFile2(std::string fileName, int lines)
 {
 	std::ofstream ofs;
-	ofs.open("Random Data.txt");
+	ofs.open(fileName);
 
 	std::string *stringArr = new std::string[lines];
 	fillArrAsc(stringArr, lines);
@@ -103,10 +105,10 @@ void shuffleArr(E a[], int size) {	//Randomly shuffles an array
 	}
 }
 
-std::streamoff readData(std::string *inBuff, std::streamoff start, int size)
+std::streamoff readData(std::string fileName, std::string *inBuff, std::streamoff start, int size)
 {
 	std::streamoff getPos;
-	std::ifstream ifs("Random Data.txt");
+	std::ifstream ifs(fileName);
 
 	if (ifs.is_open())
 	{
@@ -114,12 +116,14 @@ std::streamoff readData(std::string *inBuff, std::streamoff start, int size)
 		//while(!stream.eof())
 		for (int i = 0; i < size; i++)
 		{
-			//while (getline(ifs, buffer[i]))
-			getline(ifs, inBuff[i]);
 			if (ifs.eof())
 			{
+				eofSize = i;	//record line number of eof
 				done = true;
+				break;	//stop recording into input buffer
 			}
+			//while (getline(ifs, buffer[i]))
+			getline(ifs, inBuff[i]);
 		}
 	}
 	getPos = ifs.tellg();
@@ -130,15 +134,15 @@ std::streamoff readData(std::string *inBuff, std::streamoff start, int size)
 	//delete buffer;
 }
 
-void clearData()
+void clearData(std::string fileName)
 {
-	std::ofstream ofs("Sorted Data.txt", std::ios::out | std::ios::trunc);
+	std::ofstream ofs(fileName, std::ios::out | std::ios::trunc);
 	ofs.close();
 }
 
-void writeData(std::string *outBuff, int size)
+void writeData(std::string fileName, std::string *outBuff, int size)
 {
-	std::ofstream ofs("Sorted Data.txt", std::ios::out | std::ios::app);
+	std::ofstream ofs(fileName, std::ios::out | std::ios::app);
 
 	if (ofs.is_open())
 	{
@@ -150,6 +154,7 @@ void writeData(std::string *outBuff, int size)
 			ofs << outBuff[i] << std::endl;
 		}
 	}
+	ofs << std::endl;
 	//printArr(outBuff, size);
 	ofs.close();
 }
@@ -169,25 +174,25 @@ void printHeap(heap<E, Comp<E>>* heap, int size) {	//Prints a heap
 }
 
 template<typename E>
-void repSel(heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
+void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
 {
-	
 	E *inBuff = new E[buffSize];
 	E *outBuff = new E[buffSize];
 	int heapSize = minHeap->size();
 
-	do
+	do//for (int i = 0; i < 2; i++)
 	{
 		std::cout << "start" << start << std::endl;
-		start = readData(inBuff, start, buffSize);
+		start = readData(inFile, inBuff, start, buffSize);
 		std::cout << "start" << start << std::endl;
-		for (int j = 0; j < buffSize; j++)
+		for (int j = 0; j < eofSize; j++)
 		{
 
 			if (minHeap->size() == 0)	//if heap size is 0, rebuild heap
 			{
 				minHeap->setHeapSize(heapSize);
 				minHeap->buildHeap();
+				std::cout << minHeap->size() << "buildHeap_______________________" << std::endl;
 			}
 
 			outBuff[j] = minHeap->getVal(0);	//send root to heap buffer
@@ -204,26 +209,27 @@ void repSel(heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
 				std::cout << minHeap->size() << "size_______________________" << std::endl;
 			}
 		}
-		//writeData(outBuff, buffSize);
+		writeData(outFile, outBuff, eofSize);
 
 		std::cout << "in___________________________________" << std::endl;
-		printArr(inBuff, buffSize);
+		printArr(inBuff, eofSize);
 		std::cout << "out___________________________________" << std::endl;
-		printArr(outBuff, buffSize);
+		printArr(outBuff, eofSize);
 	} while (!done);
 	delete[] inBuff;
 	delete[] outBuff;
 }
 
 template<typename E>
-void multiMrg(int buffSize)	//Temporarily using quicksort for testing
+void multiMrg(std::string fileName, int buffSize)	//Temporarily using quicksort for testing
 {
 	E *inBuff = new E[buffSize];
-	readData(inBuff, 0, buffSize);
+	readData(fileName, inBuff, 0, buffSize);
 
 	qsortO(inBuff, buffSize);
 
-	writeData(inBuff, buffSize);
+	clearData(fileName);
+	writeData(fileName, inBuff, buffSize);
 
 	delete[] inBuff;
 }
