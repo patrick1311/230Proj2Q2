@@ -10,6 +10,7 @@
 //#pragma once
 
 int THRESHOLD2 = 8;
+bool done = false;
 
 void genRandFile(int lines);
 void genRandFile2(int lines);
@@ -31,17 +32,17 @@ int main()
 
 	std::string *heapArr = new std::string[heapSize];
 	clearData();	//clear output file
-	genRandFile(heapSize + (bufferSize * 2));	//generate input file
+	genRandFile(heapSize + (bufferSize + 2));	//generate input file
 	start = readData(heapArr, 0, heapSize);	//read data into heap array
 	heap<std::string, Comp<std::string>>* minHeap = new heap<std::string, Comp<std::string>>(heapArr, heapSize, heapSize);
-		std::cout << "heap___________________________________" << std::endl;
-		printArr(heapArr, heapSize);
+	std::cout << "heap___________________________________" << std::endl;
+	printArr(heapArr, heapSize);
 	repSel<std::string>(minHeap, start, bufferSize);
 	qsortO(heapArr, heapSize);
-		std::cout << "heap___________________________________" << std::endl;
-		printArr(heapArr, heapSize);
+	std::cout << "heap___________________________________" << std::endl;
+	printArr(heapArr, heapSize);
 	//writeData(heapArr, heapSize);
-	multiMrg<std::string>(heapSize + (bufferSize * 2));
+	multiMrg<std::string>(heapSize + (bufferSize + 2));
 
 	std::string wait;
 	std::cin >> wait;	//Pause console after program finishes
@@ -115,6 +116,10 @@ std::streamoff readData(std::string *inBuff, std::streamoff start, int size)
 		{
 			//while (getline(ifs, buffer[i]))
 			getline(ifs, inBuff[i]);
+			if (ifs.eof())
+			{
+				done = true;
+			}
 		}
 	}
 	getPos = ifs.tellg();
@@ -166,11 +171,12 @@ void printHeap(heap<E, Comp<E>>* heap, int size) {	//Prints a heap
 template<typename E>
 void repSel(heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
 {
+	
 	E *inBuff = new E[buffSize];
 	E *outBuff = new E[buffSize];
 	int heapSize = minHeap->size();
 
-	for (int i = 0; i < 2; i++)
+	do
 	{
 		std::cout << "start" << start << std::endl;
 		start = readData(inBuff, start, buffSize);
@@ -204,7 +210,7 @@ void repSel(heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
 		printArr(inBuff, buffSize);
 		std::cout << "out___________________________________" << std::endl;
 		printArr(outBuff, buffSize);
-	}
+	} while (!done);
 	delete[] inBuff;
 	delete[] outBuff;
 }
