@@ -23,9 +23,10 @@ template<typename E> void printArr(E a[], int size);
 template<typename E> void printHeap(heap<E, Comp<E>>* heap, int size);
 template<typename E> void repSel(std::string inFile , std::string outFile, heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize);
 void clearData(std::string fileName);
-void writeData(std::string fileName, std::string *outBuff, int size);
-template<typename E> void multiMrg(std::string fileName, int buffSize);
-std::fstream& goToLine(std::fstream& file, unsigned int num);
+template<typename E> void writeData(std::string fileName, E *outBuff, int size);
+void multiMrg(std::string inFile, std::string outFile, int buffSize, int numRuns);
+std::fstream& goToLine(std::fstream& file, int num);
+template<typename E> void initializeArr(E a[], int size);	//Initiates array with value 0
 
 int main()
 {
@@ -143,7 +144,8 @@ void clearData(std::string fileName)
 	ofs.close();
 }
 
-void writeData(std::string fileName, std::string *outBuff, int size)
+template<typename E>
+void writeData(std::string fileName, E *outBuff, int size)
 {
 	std::ofstream ofs(fileName, std::ios::out | std::ios::app);
 
@@ -227,36 +229,83 @@ void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, 
 }
 
 template<typename E>
-void multiMrg(std::string fileName, int buffSize)	//Temporarily using quicksort for testing
+void multiMrg(std::string inFile, std::string outFile, int buffSize, int numRuns)	//Temporarily using quicksort for testing
 {
-	//std::ifstream ifs(fileName);
-	E *inBuff = new E[numRuns];
-	/*
+	std::ifstream ifs(inFile);
+	//std::ifstream ofs(outFile);
+	int size = numRuns + 1, minIndex;
+	E *runBuff = new E[size];
+	E runStart = new E[size];
+	initializeArr(runStart, numRuns + 1);
+	
 	if (ifs.is_open())
 	{
-		for (int i = 0; i < numRuns + 1; i += buffSize)	//store values from each run into array
+		for (int i = 0; i < size; i++)	//store values from each run into array
 		{
-			goToLine(ifs, i);
-			getline(ifs, inBuff[i]);
+			runBuff[i] = firstElement(inFile, i + 1, runStart[i], buffSize);
 		}
+		minIndex = minIndex(runBuff, size);
+		//write smallest value to file
+		writeData(outFile, runBuff[minIndex], 1);
+		runStart[minIndex]++;
 
-	}*/
+	}
 
+	/*
 	readData(fileName, inBuff, 0, buffSize);
 
 	qsortO(inBuff, buffSize);
 
 	clearData(fileName);
-	writeData(fileName, inBuff, buffSize);
+	writeData(fileName, inBuff, buffSize);*/
 
-	delete[] inBuff;
+	delete[] runBuff;
+	ifs.close();
 }
 
-std::fstream& goToLine(std::fstream& file, unsigned int num) {
+template<typename E>
+E firstElement(std::string fileName, int run, int start, int buffSize)//returns first element of run
+{
+	std::ifstream ifs(fileName);
+	E first;
+	if (ifs.is_open())
+	{
+		goToLine(ifs, buffSize * run + start);
+		getline(ifs, first);
+	}
+	ifs.close();
+	return first;
+}
+
+template<typename E>
+int minIndex(E arr[], int size)	//returns index of smallest element in array
+{
+	E smallest = arr[0];
+	int index = 0;
+
+	for (int i = 1; i < size; i++)
+	{
+		if (arr[i] < smallest)
+		{
+			smallest = arr[i];
+			index = i;
+		}
+	}
+	return index;
+}
+
+std::fstream& goToLine(std::fstream& file, int num) {
 	//Sets the seek pointer of file to the beginning of line num
 	file.seekg(std::ios::beg);
 	for (int i = 0; i < num - 1; i++) {
 		file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	}
 	return file;
+}
+
+template<typename E>
+void initializeArr(E a[], int size) {	//Initiates array with value 0
+	for (int i = 0; i < size; i++) {
+		a[i] = 0;
+	}
 }
