@@ -1,29 +1,36 @@
 /*
  * Self organizing list: Count, Move to front, Transpose
  */
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class Main {
-	public static void main(String args[]){
+	public static void main(String args[]) throws FileNotFoundException{
+		Scanner in = new Scanner(new File("src/text.txt"));
 		
-		LList listCount = new LList();
-		LList listMTF = new LList();
-		LList listTranspose = new LList();
+		LList<String> list = new LList<String>();
+		String data;
+		double time = System.nanoTime();
 		
-		for(int i = 0; i < 10; i++)
-			listTranspose.append(i);
-
-		listTranspose.print();
-
-		listTranspose.accessTranspose(8);
-		listTranspose.print();
-		listTranspose.accessTranspose(8);
-		listTranspose.print();
-		listTranspose.accessTranspose(8);
-		listTranspose.print();
-		listTranspose.accessTranspose(0);
-		listTranspose.print();
-		listTranspose.accessTranspose(4);
-		listTranspose.print();
-		System.out.println("Comparison = " + listTranspose.getComp());
+		
+		while(in.hasNext()){
+			
+			data = in.next();
+			
+			if(!list.isInList(data)){
+				list.append(data);
+				list.accessCount(data);	//use accessCount, accessMTF, accessTranspose
+			}
+			else
+				list.accessCount(data);
+		}
+		
+		time = System.nanoTime() - time;
+		list.print();
+		
+		System.out.println("Comparison = " + list.getComp());
+		System.out.println("Run Time: " + time + " nanoseconds");
+		in.close();
 	}
 }

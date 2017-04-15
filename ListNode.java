@@ -1,8 +1,8 @@
 
-public class ListNode {
+public class ListNode<E> {
 	
-	public ListNode next;
-	public int element;
+	public ListNode<E> next;
+	public E element;
 	public int freq;
 	
 	public ListNode(){
@@ -10,7 +10,7 @@ public class ListNode {
 		freq = 0;
 	}
 	
-	public ListNode(int e, ListNode nextval){
+	public ListNode(E e, ListNode<E> nextval){
 		element = e;
 		next = nextval;
 		freq = 0;
