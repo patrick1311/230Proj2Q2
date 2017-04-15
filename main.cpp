@@ -183,7 +183,7 @@ void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, 
 		std::cout << "start" << start << std::endl;
 		start = readData(inFile, inBuff, start, buffSize);
 		std::cout << "start" << start << std::endl;
-		for (int j = 0; j < eofSize; j++)
+		for (int j = 0; j < buffSize; j++)
 		{
 			if (minHeap->size() == 0)	//if heap size is 0, rebuild heap
 			{
@@ -196,19 +196,16 @@ void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, 
 				minHeap->removefirst();	
 				if (minHeap->size() == 0)
 				{
+					minHeap->setHeapSize(heapSize);
 					minHeap->buildHeap();
 				}
-				outBuff[j] = minHeap->getVal(0);	//send root to heap buffer
-				minHeap->setVal(0, inBuff[j]);
-				minHeap->siftdown(0);
+				std::cout  << "Heap_______________________" << std::endl;
+				printHeap(minHeap, minHeap->size());
 			}
 			//std::cout << minHeap->size() << "size_______________________" << std::endl;
-			else
-			{
-				outBuff[j] = minHeap->getVal(0);	//send root to heap buffer
-				minHeap->setVal(0, inBuff[j]);
-				minHeap->siftdown(0);	//siftdown root
-			}
+			outBuff[j] = minHeap->getVal(0);	//send root to heap buffer
+			minHeap->setVal(0, inBuff[j]);
+			minHeap->siftdown(0);	//siftdown root	
 		}
 		
 		
