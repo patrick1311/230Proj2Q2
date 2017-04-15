@@ -33,17 +33,17 @@ int main()
 	std::string inputFile = "RandomData.txt", outputFile = "SortedData.txt";
 	std::string *heapArr = new std::string[heapSize];
 	clearData(outputFile);	//clear output file
-	genRandFile(inputFile, heapSize + (bufferSize + 21));	//generate input file
+	genRandFile(inputFile, heapSize + (bufferSize * 2));	//generate input file
 	start = readData(inputFile, heapArr, 0, heapSize);	//read data into heap array
 	heap<std::string, Comp<std::string>>* minHeap = new heap<std::string, Comp<std::string>>(heapArr, heapSize, heapSize);
 	std::cout << "heap___________________________________" << std::endl;
 	printArr(heapArr, heapSize);
 	repSel<std::string>(inputFile, outputFile, minHeap, start, bufferSize);
-	qsortO(heapArr, heapSize);
+	qsortO(heapArr, eofSize);
 	std::cout << "heap___________________________________" << std::endl;
 	printArr(heapArr, heapSize);
 	writeData(outputFile, heapArr, eofSize);	//write array to output file
-	//multiMrg<std::string>(outputFile, heapSize + (bufferSize * 2));
+												//multiMrg<std::string>(outputFile, heapSize + (bufferSize * 2));
 
 	std::string wait;
 	std::cin >> wait;	//Pause console after program finishes
@@ -117,7 +117,7 @@ std::streamoff readData(std::string fileName, std::string *inBuff, std::streamof
 		{
 			if (ifs.eof())
 			{
-				eofSize = i;	//record line number of eof
+				eofSize = i+1;	//record line number of eof
 				done = true;
 			}
 			//while (getline(ifs, buffer[i]))
@@ -174,16 +174,22 @@ void printHeap(heap<E, Comp<E>>* heap, int size) {	//Prints a heap
 template<typename E>
 void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
 {
+	int i = buffSize, j = 0; 
+	int outputSize =buffSize;
 	E *inBuff = new E[buffSize];
 	E *outBuff = new E[buffSize];
 	int heapSize = minHeap->size();
 
-	do//for (int i = 0; i < 2; i++)
+	while(!done)
 	{
-		std::cout << "start" << start << std::endl;
-		start = readData(inFile, inBuff, start, buffSize);
-		std::cout << "start" << start << std::endl;
-		for (int j = 0; j < buffSize; j++)
+		if (i == buffSize)
+		{
+			std::cout << "start" << start << std::endl;
+			start = readData(inFile, inBuff, start, buffSize);
+			std::cout << "start" << start << std::endl;
+			i = 0;
+		}
+		for (; j < buffSize, i < buffSize; j++, i++)
 		{
 			if (minHeap->size() == 0)	//if heap size is 0, rebuild heap
 			{
@@ -191,30 +197,35 @@ void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, 
 				minHeap->buildHeap();
 				std::cout << minHeap->size() << "buildHeap_______________________" << std::endl;
 			}
-			if (j != 0 && minHeap->getVal(0) < outBuff[j-1])
+			if (j != 0 && minHeap->getVal(0) < outBuff[j - 1])
 			{
-				minHeap->removefirst();	
+				minHeap->removefirst();
 				if (minHeap->size() == 0)
 				{
 					minHeap->setHeapSize(heapSize);
 					minHeap->buildHeap();
+					if (minHeap->getVal(0) < outBuff[j - 1])
+					{
+						outputSize = j;
+						break;
+					}
 				}
-				std::cout  << "Heap_______________________" << std::endl;
+				std::cout << "Heap_______________________" << std::endl;
 				printHeap(minHeap, minHeap->size());
 			}
 			//std::cout << minHeap->size() << "size_______________________" << std::endl;
 			outBuff[j] = minHeap->getVal(0);	//send root to heap buffer
-			minHeap->setVal(0, inBuff[j]);
+			minHeap->setVal(0, inBuff[i]);
 			minHeap->siftdown(0);	//siftdown root	
 		}
-		
-		
-		writeData(outFile, outBuff, eofSize);
+		writeData(outFile, outBuff, outputSize);
+		j = 0;
+		outputSize = buffSize;
 		std::cout << "in___________________________________" << std::endl;
 		printArr(inBuff, eofSize);
 		std::cout << "out___________________________________" << std::endl;
-		printArr(outBuff, eofSize);
-	} while (!done);
+		printArr(outBuff, outputSize);
+	}// while (!done);
 	delete[] inBuff;
 	delete[] outBuff;
 }
