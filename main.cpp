@@ -25,7 +25,7 @@ template<typename E> void repSel(std::string inFile , std::string outFile, heap<
 void clearData(std::string fileName);
 void writeData(std::string fileName, std::string *outBuff, int size);
 template<typename E> void multiMrg(std::string fileName, int buffSize);
-std::fstream& GotoLine(std::fstream& file, unsigned int num);
+std::fstream& goToLine(std::fstream& file, unsigned int num);
 
 int main()
 {
@@ -36,7 +36,7 @@ int main()
 
 	std::string *heapArr = new std::string[heapSize];
 	clearData(outputFile);	//clear output file
-	genRandFile(inputFile, heapSize + (bufferSize + 2));	//generate input file
+	genRandFile(inputFile, heapSize + (bufferSize *3) + 4);	//generate input file
 	start = readData(inputFile, heapArr, 0, heapSize);	//read data into heap array
 	heap<std::string, Comp<std::string>>* minHeap = new heap<std::string, Comp<std::string>>(heapArr, heapSize, heapSize);
 		std::cout << "heap___________________________________" << std::endl;
@@ -184,17 +184,16 @@ void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, 
 
 	do//for (int i = 0; i < 2; i++)
 	{
-		std::cout << "start" << start << std::endl;
+		//std::cout << "start" << start << std::endl;
 		start = readData(inFile, inBuff, start, buffSize);
-		std::cout << "start" << start << std::endl;
+		//std::cout << "start" << start << std::endl;
 		for (int j = 0; j < eofLine; j++)
 		{
-
 			if (minHeap->size() == 0)	//if heap size is 0, rebuild heap
 			{
 				minHeap->setHeapSize(heapSize);
 				minHeap->buildHeap();
-				std::cout << minHeap->size() << "buildHeap_______________________" << std::endl;
+				//std::cout << minHeap->size() << "buildHeap_______________________" << std::endl;
 			}
 
 			outBuff[j] = minHeap->getVal(0);	//send root to heap buffer
@@ -202,32 +201,37 @@ void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, 
 			if (inBuff[j] > outBuff[j])
 			{
 				minHeap->siftdown(0);	//siftdown root
-				std::cout << minHeap->size() << "size_______________________" << std::endl;
+				//std::cout << minHeap->size() << "size_______________________" << std::endl;
 
 			}
 			else
 			{
 				minHeap->removefirst();
-				std::cout << minHeap->size() << "size_______________________" << std::endl;
+				//std::cout << minHeap->size() << "size_______________________" << std::endl;
 			}
 		}
+
 		writeData(outFile, outBuff, eofLine);
 
 		std::cout << "in___________________________________" << std::endl;
 		printArr(inBuff, buffSize);
 		std::cout << "out___________________________________" << std::endl;
-		printArr(outBuff, buffSize);
+		printArr(outBuff, eofLine);
+
+		minHeap->setHeapSize(heapSize);
+		minHeap->buildHeap();
+		//std::cout << minHeap->size() << "buildHeap_______________________" << std::endl;
 	} while (!done);
 	delete[] inBuff;
 	delete[] outBuff;
 }
 
 template<typename E>
-void multiMrg(std::string fileName, int buffSize, int numRuns)	//Temporarily using quicksort for testing
+void multiMrg(std::string fileName, int buffSize)	//Temporarily using quicksort for testing
 {
-	std::ifstream ifs(fileName);
+	//std::ifstream ifs(fileName);
 	E *inBuff = new E[numRuns];
-
+	/*
 	if (ifs.is_open())
 	{
 		for (int i = 0; i < numRuns + 1; i += buffSize)	//store values from each run into array
@@ -236,9 +240,9 @@ void multiMrg(std::string fileName, int buffSize, int numRuns)	//Temporarily usi
 			getline(ifs, inBuff[i]);
 		}
 
-	}
+	}*/
 
-	//readData(fileName, inBuff, 0, buffSize);
+	readData(fileName, inBuff, 0, buffSize);
 
 	qsortO(inBuff, buffSize);
 
