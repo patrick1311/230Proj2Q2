@@ -31,10 +31,9 @@ int main()
 	int bufferSize = eofSize, heapSize = 7;
 	std::streamoff start;
 	std::string inputFile = "RandomData.txt", outputFile = "SortedData.txt";
-
 	std::string *heapArr = new std::string[heapSize];
 	clearData(outputFile);	//clear output file
-	genRandFile(inputFile, heapSize + (bufferSize + 2));	//generate input file
+	genRandFile(inputFile, heapSize + (bufferSize + 21));	//generate input file
 	start = readData(inputFile, heapArr, 0, heapSize);	//read data into heap array
 	heap<std::string, Comp<std::string>>* minHeap = new heap<std::string, Comp<std::string>>(heapArr, heapSize, heapSize);
 	std::cout << "heap___________________________________" << std::endl;
@@ -43,7 +42,7 @@ int main()
 	qsortO(heapArr, heapSize);
 	std::cout << "heap___________________________________" << std::endl;
 	printArr(heapArr, heapSize);
-	writeData(outputFile, heapArr, heapSize);	//write array to output file
+	writeData(outputFile, heapArr, eofSize);	//write array to output file
 	//multiMrg<std::string>(outputFile, heapSize + (bufferSize * 2));
 
 	std::string wait;
@@ -120,7 +119,6 @@ std::streamoff readData(std::string fileName, std::string *inBuff, std::streamof
 			{
 				eofSize = i;	//record line number of eof
 				done = true;
-				break;	//stop recording into input buffer
 			}
 			//while (getline(ifs, buffer[i]))
 			getline(ifs, inBuff[i]);
@@ -187,30 +185,34 @@ void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, 
 		std::cout << "start" << start << std::endl;
 		for (int j = 0; j < eofSize; j++)
 		{
-
 			if (minHeap->size() == 0)	//if heap size is 0, rebuild heap
 			{
 				minHeap->setHeapSize(heapSize);
 				minHeap->buildHeap();
 				std::cout << minHeap->size() << "buildHeap_______________________" << std::endl;
 			}
-
-			outBuff[j] = minHeap->getVal(0);	//send root to heap buffer
-			minHeap->setVal(0, inBuff[j]);
-			if (inBuff[j] > outBuff[j])
+			if (j != 0 && minHeap->getVal(0) < outBuff[j-1])
 			{
-				minHeap->siftdown(0);	//siftdown root
-				std::cout << minHeap->size() << "size_______________________" << std::endl;
-
+				minHeap->removefirst();	
+				if (minHeap->size() == 0)
+				{
+					minHeap->buildHeap();
+				}
+				outBuff[j] = minHeap->getVal(0);	//send root to heap buffer
+				minHeap->setVal(0, inBuff[j]);
+				minHeap->siftdown(0);
 			}
+			//std::cout << minHeap->size() << "size_______________________" << std::endl;
 			else
 			{
-				minHeap->removefirst();
-				std::cout << minHeap->size() << "size_______________________" << std::endl;
+				outBuff[j] = minHeap->getVal(0);	//send root to heap buffer
+				minHeap->setVal(0, inBuff[j]);
+				minHeap->siftdown(0);	//siftdown root
 			}
 		}
+		
+		
 		writeData(outFile, outBuff, eofSize);
-
 		std::cout << "in___________________________________" << std::endl;
 		printArr(inBuff, eofSize);
 		std::cout << "out___________________________________" << std::endl;
