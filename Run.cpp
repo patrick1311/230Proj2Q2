@@ -5,9 +5,17 @@ private:
 	E value;
 
 public:
-	Run(int runIndex, E runValue)     // Constructor
+	Run(int ind, E val)     // Constructor
 	{
-		index = runIndex;
-		value = runValue;
+		index = ind;
+		value = val;
+	}
+	inline int getIndex()
+	{
+		return index;
+	}
+	inline E getValue()
+	{
+		return value;
 	}
 };
