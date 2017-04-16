@@ -45,7 +45,7 @@ int main()
 	std::string *heapArr = new std::string[heapSize];
 	clearData(preMrgFile);	//clear output file
 	clearData(mergeFile);	//clear output file
-	genRandFile(inputFile, 21);	//generate input file
+	genRandFile(inputFile, 23);	//generate input file
 	start = readData(inputFile, heapArr, 0, heapSize);	//read data into heap array
 	heap<std::string, Comp<std::string>>* minHeap = new heap<std::string, Comp<std::string>>(heapArr, heapSize, heapSize);
 	std::cout << "heap___________________________________" << std::endl;
@@ -252,7 +252,7 @@ void multiMrg(std::string inFile, std::string outFile, int buffSize, int numRuns
 {
 	std::fstream ifs(inFile);
 	std::ofstream ofs(outFile);
-	int size = numRuns;
+	int size = numRuns+1;
 	int minI;
 	std::string *runBuff = new std::string[size];
 	int *runStart = new int[size];
@@ -267,7 +267,7 @@ void multiMrg(std::string inFile, std::string outFile, int buffSize, int numRuns
 			for (int j = 0; j < size; j++)
 			{
 				goToLine(ifs, 7*j+1 + runStart[j]);
-				if (runStart[j] < buffSize)
+				if (runStart[j]== 0 || runBuff[j]!="")
 				{
 					ifs >> runBuff[j];
 				}
@@ -276,7 +276,7 @@ void multiMrg(std::string inFile, std::string outFile, int buffSize, int numRuns
 			minI = minIndex(runBuff, size);
 			ofs << runBuff[minI] << std::endl;
 			runStart[minI]++;
-			if (runStart[minI] == buffSize)
+			if (runStart[minI] == buffSize || (minI == (size-1) && runStart[minI] == eofLine))
 			{
 				runBuff[minI] = "";
 			}
