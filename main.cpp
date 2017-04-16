@@ -23,9 +23,13 @@ template<typename E> void printArr(E a[], int size);
 template<typename E> void printHeap(heap<E, Comp<E>>* heap, int size);
 template<typename E> void repSel(std::string inFile , std::string outFile, heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize);
 void clearData(std::string fileName);
+template<typename E> void writeData(std::string fileName, E output, int size);
 template<typename E> void writeData(std::string fileName, E *outBuff, int size);
 void multiMrg(std::string inFile, std::string outFile, int buffSize, int numRuns);
 std::fstream& goToLine(std::fstream& file, int num);
+std::string firstElement(std::string fileName, int run, int start, int buffSize);//returns first element of run
+int minIndex(std::string *arr, int size);	//returns index of smallest element in array
+
 template<typename E> void initializeArr(E a[], int size);	//Initiates array with value 0
 
 int main()
@@ -33,21 +37,22 @@ int main()
 	srand((unsigned)time(0));
 	int bufferSize = eofLine, heapSize = 7;
 	std::streamoff start;
-	std::string inputFile = "RandomData.txt", outputFile = "SortedData.txt";
+	std::string inputFile = "RandomData.txt", preMrgFile = "PreMerge.txt", mergeFile = "SortedData.txt";
 
 	std::string *heapArr = new std::string[heapSize];
-	clearData(outputFile);	//clear output file
-	genRandFile(inputFile, heapSize + (bufferSize *3) + 4);	//generate input file
+	clearData(preMrgFile);	//clear output file
+	clearData(mergeFile);	//clear output file
+	genRandFile(inputFile, 21);	//generate input file
 	start = readData(inputFile, heapArr, 0, heapSize);	//read data into heap array
 	heap<std::string, Comp<std::string>>* minHeap = new heap<std::string, Comp<std::string>>(heapArr, heapSize, heapSize);
 		std::cout << "heap___________________________________" << std::endl;
 		printArr(heapArr, heapSize);
-	repSel<std::string>(inputFile, outputFile, minHeap, start, bufferSize);
+	repSel<std::string>(inputFile, preMrgFile, minHeap, start, bufferSize);
 	qsortO(heapArr, heapSize);
 		std::cout << "heap___________________________________" << std::endl;
 		printArr(heapArr, heapSize);
-	writeData(outputFile, heapArr, heapSize);	//write array to output file
-	//multiMrg<std::string>(outputFile, heapSize + (bufferSize + 2));
+	writeData(preMrgFile, heapArr, heapSize);	//write array to output file
+	multiMrg(preMrgFile, mergeFile, bufferSize, 2);
 
 	std::string wait;
 	std::cin >> wait;	//Pause console after program finishes
@@ -145,6 +150,18 @@ void clearData(std::string fileName)
 }
 
 template<typename E>
+void writeData(std::string fileName, E output, int size)
+{
+	std::ofstream ofs(fileName, std::ios::out | std::ios::app);
+
+	if (ofs.is_open())
+	{
+		ofs << output << std::endl;
+	}
+	ofs.close();
+}
+
+template<typename E>
 void writeData(std::string fileName, E *outBuff, int size)
 {
 	std::ofstream ofs(fileName, std::ios::out | std::ios::app);
@@ -228,27 +245,29 @@ void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, 
 	delete[] outBuff;
 }
 
-template<typename E>
 void multiMrg(std::string inFile, std::string outFile, int buffSize, int numRuns)	//Temporarily using quicksort for testing
 {
 	std::ifstream ifs(inFile);
 	//std::ifstream ofs(outFile);
-	int size = numRuns + 1, minIndex;
-	E *runBuff = new E[size];
-	E runStart = new E[size];
+	int size = numRuns + 1;
+	int minInx;
+	std::string *runBuff = new std::string [size];
+	int *runStart = new int [size];
 	initializeArr(runStart, numRuns + 1);
 	
 	if (ifs.is_open())
 	{
-		for (int i = 0; i < size; i++)	//store values from each run into array
+		for (int j = 0; j < )
 		{
-			runBuff[i] = firstElement(inFile, i + 1, runStart[i], buffSize);
+			for (int i = 0; i < size; i++)	//store values from each run into array
+			{
+				runBuff[i] = firstElement(inFile, i + 1, runStart[i], buffSize);
+			}
+			minInx = minIndex(runBuff, size);
+			//write smallest value to file
+			writeData(outFile, runBuff[minInx], 1);
+			runStart[minInx]++;
 		}
-		minIndex = minIndex(runBuff, size);
-		//write smallest value to file
-		writeData(outFile, runBuff[minIndex], 1);
-		runStart[minIndex]++;
-
 	}
 
 	/*
@@ -263,11 +282,10 @@ void multiMrg(std::string inFile, std::string outFile, int buffSize, int numRuns
 	ifs.close();
 }
 
-template<typename E>
-E firstElement(std::string fileName, int run, int start, int buffSize)//returns first element of run
+std::string firstElement(std::string fileName, int run, int start, int buffSize)//returns first element of run
 {
-	std::ifstream ifs(fileName);
-	E first;
+	std::fstream ifs(fileName);
+	std::string first;
 	if (ifs.is_open())
 	{
 		goToLine(ifs, buffSize * run + start);
@@ -277,10 +295,10 @@ E firstElement(std::string fileName, int run, int start, int buffSize)//returns 
 	return first;
 }
 
-template<typename E>
-int minIndex(E arr[], int size)	//returns index of smallest element in array
+
+int minIndex(std::string *arr, int size)	//returns index of smallest element in array
 {
-	E smallest = arr[0];
+	std::string smallest = arr[0];
 	int index = 0;
 
 	for (int i = 1; i < size; i++)
