@@ -15,7 +15,7 @@ int THRESHOLD2 = 8;
 bool done = false;
 int eofLine = 7;
 
-int pow(int a, int b);
+
 bool isEmptyArr(std::string *arr, int size);
 void genRandFile(std::string fileName, int lines);
 void genRandFile2(std::string fileName, int lines);
@@ -45,7 +45,7 @@ int main()
 	std::string *heapArr = new std::string[heapSize];
 	clearData(preMrgFile);	//clear output file
 	clearData(mergeFile);	//clear output file
-	genRandFile(inputFile, 14);	//generate input file
+	genRandFile(inputFile, 21);	//generate input file
 	start = readData(inputFile, heapArr, 0, heapSize);	//read data into heap array
 	heap<std::string, Comp<std::string>>* minHeap = new heap<std::string, Comp<std::string>>(heapArr, heapSize, heapSize);
 	std::cout << "heap___________________________________" << std::endl;
@@ -55,7 +55,7 @@ int main()
 	std::cout << "heap___________________________________" << std::endl;
 	printArr(heapArr, heapSize);
 	writeData(preMrgFile, heapArr, heapSize);	//write array to output file
-	multiMrg(preMrgFile, mergeFile, bufferSize, 2);
+	multiMrg(preMrgFile, mergeFile, bufferSize, 3);
 	std::string wait;
 	std::cin >> wait;	//Pause console after program finishes
 	return 0;
@@ -260,13 +260,13 @@ void multiMrg(std::string inFile, std::string outFile, int buffSize, int numRuns
 	{
 		runStart[i] = 0;
 	}
-	if (ifs.is_open()  && ofs.is_open())
+	if (ifs.is_open() && ofs.is_open())
 	{
 		do
 		{
 			for (int j = 0; j < size; j++)
 			{
-				goToLine(ifs, pow(buffSize+1, j) + runStart[j]);
+				goToLine(ifs, 7*j+1 + runStart[j]);
 				if (runStart[j] < buffSize)
 				{
 					ifs >> runBuff[j];
@@ -284,16 +284,6 @@ void multiMrg(std::string inFile, std::string outFile, int buffSize, int numRuns
 	}
 	ofs.close();
 	ifs.close();
-}
-
-int pow(int a, int b)
-{
-	int sum = 1;
-	for (int i = 0; i < b; i++)
-	{
-		sum *= a;
-	}
-	return sum;
 }
 
 
@@ -314,12 +304,12 @@ std::string firstElement(std::string fileName, int run, int start, int buffSize)
 
 int minIndex(std::string *arr, int size)	//returns index of smallest element in array
 {
-	std::string smallest="ZZZZZZZZZZZZZZZZZ";
+	std::string smallest = "ZZZZZZZZZZZZZZZZZ";
 	int index = 0;
 
 	for (int i = 0; i < size; i++)
 	{
-		if (arr[i] < smallest && arr[i]!= "")
+		if (arr[i] < smallest && arr[i] != "")
 		{
 			smallest = arr[i];
 			index = i;
