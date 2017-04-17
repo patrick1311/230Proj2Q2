@@ -204,6 +204,7 @@ inline void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* mi
 
 inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int numRuns)	//Temporarily using quicksort for testing
 {
+	std::string record;
 	std::fstream ifs(inFile);
 	std::ofstream ofs(outFile);
 	int size = numRuns + 1;
@@ -223,24 +224,26 @@ inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int 
 			{
 				runBuff[i].setSize(eofLine);
 			}
-			ifs >> runBuff[i].getValue();
+			ifs >> record;
+			std::cout << record << std::endl;
+			runBuff[i].setValue(record);
 		}
-		heap<Run<std::string>, Comp<std::string>>* runHeap = new heap<Run<std::string>, Comp<std::string>>(runBuff, size, size);
+		heap<Run<std::string>, Comp<Run<std::string>>>* runHeap = new heap<Run<std::string>, Comp<Run<std::string>>>(runBuff, size, size);
 
-		std::string record;
 		do
 		{
 			//std::cout << "_____________________" << std::endl;		//Delete when done testing
-			Run<std::string>* min = &runHeap->getVal(0);
-			writeData(outFile,min->getValue());
-			min->incIndex();
-			if (min->isDone())
+			Run<std::string> *min = &runHeap->getVal(0);
+			writeData(outFile,runHeap->getVal(0).getValue());
+			std::cout << runHeap->getVal(0).getValue() << std::endl;
+			runHeap->getVal(0).incIndex();
+			if (runHeap->getVal(0).isDone())
 			{
 				runHeap->removefirst();
 			}
-			goToLine(ifs, buffSize*min->getNum() + min->getInd() + 1);
+			goToLine(ifs, buffSize*runHeap->getVal(0).getNum() + runHeap->getVal(0).getInd() + 1);
 			ifs >> record;
-			min->setValue(record);
+			runHeap->getVal(0).setValue(record);
 			runHeap->siftdown(0);
 		} while (runHeap->size()!= 0);	//Continue looping until all runs are finished
 	}
