@@ -7,8 +7,8 @@ private:
 	E value;
 
 public:
-	Run() { index = 0; }
-	Run(int n, E val, int index = 0)     // Constructor
+	Run() { index = 0;}
+	Run(int n, E val)     // Constructor
 	{
 		num = n;
 		value = val;
@@ -31,7 +31,7 @@ public:
 	}
 	inline void setValue(E n)
 	{
-		val = n;
+		value = n;
 	}
 	inline void setSize(int n)
 	{
@@ -43,15 +43,20 @@ public:
 	}
 	inline bool isDone()
 	{
-		if (index == size)
-		{
-			return true;
-		}
-		return false;
+		return index == size;
 	}
 
 	bool operator<(const Run &R2)
 	{
 		return value < R2.value;
+	}
+
+	void print()
+	{
+		std::cout << "Num: " << num <<std::endl;
+		std::cout << "Index: " << index << std::endl;
+		std::cout << "Size: " << size << std::endl;
+		std::cout << "Value: " << value << std::endl;
+		std::cout << std::endl;
 	}
 };

@@ -83,6 +83,10 @@ public:
 	  return Heap[pos];
   }
 
+  E* getValue(int pos) {
+	  return &Heap[pos];
+  }
+
   void setVal(int pos, E val) {
 	  Heap[pos] = val;
   }

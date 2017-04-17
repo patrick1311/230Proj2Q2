@@ -28,6 +28,8 @@ bool done = false;
 int eofLine = 7;
 int numRuns = 0;
 
+template<typename E>
+void printHeap(heap<E, Comp<E>>* heap, int size);
 
 inline void clearData(std::string fileName);
 inline void genRandFile(std::string fileName, int lines);
@@ -225,7 +227,6 @@ inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int 
 				runBuff[i].setSize(eofLine);
 			}
 			ifs >> record;
-			std::cout << record << std::endl;
 			runBuff[i].setValue(record);
 		}
 		heap<Run<std::string>, Comp<Run<std::string>>>* runHeap = new heap<Run<std::string>, Comp<Run<std::string>>>(runBuff, size, size);
@@ -233,23 +234,32 @@ inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int 
 		do
 		{
 			//std::cout << "_____________________" << std::endl;		//Delete when done testing
-			Run<std::string> *min = &runHeap->getVal(0);
-			writeData(outFile,runHeap->getVal(0).getValue());
-			std::cout << runHeap->getVal(0).getValue() << std::endl;
-			runHeap->getVal(0).incIndex();
-			if (runHeap->getVal(0).isDone())
+			Run<std::string>* min = runHeap->getValue(0);
+			writeData(outFile,min->getValue());
+			printHeap(runHeap, runHeap->size());
+			std::cout << std::endl << std::endl;
+			min->incIndex();
+			if (min->isDone())
 			{
 				runHeap->removefirst();
 			}
-			goToLine(ifs, buffSize*runHeap->getVal(0).getNum() + runHeap->getVal(0).getInd() + 1);
+			goToLine(ifs, buffSize*min->getNum() + min->getInd() + 1);
 			ifs >> record;
-			runHeap->getVal(0).setValue(record);
+			std::cout << record << std::endl;
+			min->setValue(record);
 			runHeap->siftdown(0);
 		} while (runHeap->size()!= 0);	//Continue looping until all runs are finished
 	}
 	ofs.close();
 	ifs.close();
 	delete[] runBuff;
+}
+
+template<typename E>
+void printHeap(heap<E, Comp<E>>* heap, int size) {	//Prints a heap
+	for (int i = 0; i < size; i++) {
+		heap->getVal(i).print();
+	}
 }
 
 inline int calcLineNum(int buffSize, int numRuns)
