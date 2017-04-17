@@ -8,7 +8,6 @@
 //7.make beautiful graphs
 //8.find fourth group member
 //9.change readData to void and use goToLine for start?
-//10.change ZZZZZZZZZ looks ghetto as fuck
 //11.delete any unecessary testing code
 //12.inline functions to speed up program
 
@@ -18,46 +17,52 @@
 #include <chrono>	//time
 #include <limits>	//GoToLine
 #include "heap.h"
+#include "Run.cpp"
 #include "Comp.cpp"
 #include "qsortop.cpp"
 
+
 int THRESHOLD2 = 8;
 bool done = false;
-int eofLine = 1000;
+int eofLine = 7;
 int numRuns = 0;
+
+template<typename E>
+void printHeap(heap<E, Comp<E>>* heap, int size);
 
 inline void clearData(std::string fileName);
 inline void genRandFile(std::string fileName, int lines);
+inline std::string readData(std::string fileName, int line);
 inline std::streamoff readData(std::string fileName, std::string *inBuff, std::streamoff start, int size);
-template<typename E> inline void writeData(std::string fileName, E output, int size);
+template<typename E> inline void writeData(std::string fileName, E output);
 template<typename E> inline void writeData(std::string fileName, E *outBuff, int size);
 template<typename E> inline void printArr(E a[], int size);
 template<typename E> inline void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize);
 inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int numRuns);
+template<typename E> inline int calcLineNum(Run<E> r, int buffSize);
+template<typename E> inline int calcLineNum(Run<E> *r, int buffSize);
 template<typename E> inline void initializeArr(E a[], int size);	//Initiates array with value 0
-inline std::fstream& goToLine(std::fstream& file, int num);
-inline int minIndex(std::string *arr, int size);	//Returns index of smallest element in array
-inline bool isEmptyArr(std::string *arr, int size);
+inline std::ifstream& goToLine(std::ifstream& file, int num);
 
 int main()
 {
 	srand((unsigned)time(0));
-	int bufferSize = eofLine, heapSize = 1000;
+	int bufferSize = eofLine, heapSize = 7;
 	std::streamoff start;
 	std::string inputFile = "RandomData.txt", preMrgFile = "PreMerge.txt", mergeFile = "SortedData.txt";
 	std::string *heapArr = new std::string[heapSize];
 
 	clearData(preMrgFile);	//Clear output file
 	clearData(mergeFile);	//Clear output file
-	genRandFile(inputFile, 1000);	//Generate input file
+	genRandFile(inputFile, 23);	//Generate input file
 	start = readData(inputFile, heapArr, 0, heapSize);	//Read data into heap array
 	heap<std::string, Comp<std::string>>* minHeap = new heap<std::string, Comp<std::string>>(heapArr, heapSize, heapSize);
-		//std::cout << "heap___________________________________" << std::endl;	//Delete when done testing
-		//printArr(heapArr, heapSize);											//Delete when done testing
+	//std::cout << "heap___________________________________" << std::endl;	//Delete when done testing
+	//printArr(heapArr, heapSize);											//Delete when done testing
 	repSel<std::string>(inputFile, preMrgFile, minHeap, start, bufferSize);
 	qsortO(heapArr, heapSize);
-		//std::cout << "heap___________________________________" << std::endl;	//Delete when done testing
-		//printArr(heapArr, heapSize);											//Delete when done testing
+	//std::cout << "heap___________________________________" << std::endl;	//Delete when done testing
+	//printArr(heapArr, heapSize);											//Delete when done testing
 	writeData(preMrgFile, heapArr, heapSize);	//Write array to output file
 	multiMrg(preMrgFile, mergeFile, bufferSize, numRuns);	//Merge output buffers together
 	std::cout << "Finished" << std::endl;
@@ -93,6 +98,20 @@ inline void genRandFile(std::string fileName, int lines)
 	ofs.close();
 }
 
+inline std::string readData(std::string fileName, int line)
+{//Reads a line of data from file at line and returns the data
+	std::ifstream ifs(fileName);
+	std::string data;
+	goToLine(ifs, line);
+
+	if (ifs.is_open())
+	{
+		getline(ifs, data);
+	}
+	ifs.close();
+	return data;
+}
+
 inline std::streamoff readData(std::string fileName, std::string *inBuff, std::streamoff start, int size)
 {	//Reads lines of data from file at position start and outputs position of seek pointer
 	std::streamoff getPos;
@@ -114,12 +133,11 @@ inline std::streamoff readData(std::string fileName, std::string *inBuff, std::s
 	}
 	getPos = ifs.tellg();
 	ifs.close();
-
 	return getPos;
 }
 
 template<typename E>
-inline void writeData(std::string fileName, E output, int size)
+inline void writeData(std::string fileName, E output)
 {	//Writes data to file
 	std::ofstream ofs(fileName, std::ios::out | std::ios::app);
 
@@ -184,57 +202,85 @@ inline void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* mi
 		writeData(outFile, outBuff, eofLine);	//Write output buffer to file
 		minHeap->setHeapSize(heapSize);	//Rebuild heap
 		minHeap->buildHeap();
-			//std::cout << "in___________________________________" << std::endl;		  //Delete when done testing
-			//printArr(inBuff, buffSize);												  //Delete when done testing
-			//std::cout << "out___________________________________" << std::endl;		  //Delete when done testing
-			//printArr(outBuff, eofLine);												  //Delete when done testing
+		//std::cout << "in___________________________________" << std::endl;		  //Delete when done testing
+		//printArr(inBuff, buffSize);												  //Delete when done testing
+		//std::cout << "out___________________________________" << std::endl;		  //Delete when done testing
+		//printArr(outBuff, eofLine);												  //Delete when done testing
 		if (eofLine != 0)
 		{
 			numRuns++;
 		}
 	} while (!done);
-		//std::cout << numRuns << "numRuns___________________________________" << std::endl;		//Delete when done testing
+	//std::cout << numRuns << "numRuns___________________________________" << std::endl;		//Delete when done testing
 	delete[] inBuff;
 	delete[] outBuff;
 }
 
 inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int numRuns)	//Temporarily using quicksort for testing
 {
-	std::fstream ifs(inFile);
-	std::ofstream ofs(outFile);
+	//std::ifstream ifs(inFile);
+	std::string record;
 	int size = numRuns + 1;
-	int minI;
-	std::string *runBuff = new std::string[size];
-	int *runStart = new int[size];
+	Run<std::string> *runBuff = new Run<std::string>[size];
 
-	initializeArr(runStart, size);
-	if (ifs.is_open() && ofs.is_open())
+	for (int i = 0; i < size; i++)	//Build initial array of runs for heap
 	{
-		do
+		runBuff[i].setNum(i);	//Set run numbers
+		if (i < (size - 1) || eofLine == 0)	//Set run size
 		{
-				//std::cout << "_____________________" << std::endl;		//Delete when done testing
-			for (int j = 0; j < size; j++)
-			{
-				goToLine(ifs, buffSize * j + 1 + runStart[j]);
-				if (runStart[j] == 0 || runBuff[j] != "")
-				{	//If start of run or run is not empty then ???
-					ifs >> runBuff[j];
-				}
-					//std::cout << runBuff[j] << std::endl;		//Delete when done testing
-			}
-			minI = minIndex(runBuff, size);	//Find smallest run buffer value of all runs
-			ofs << runBuff[minI] << std::endl;	//Write smallest run buffer value to textfile
-			runStart[minI]++;	//Move to next element in run
-			if (runStart[minI] == buffSize || (minI == (size - 1) && runStart[minI] == eofLine))
-			{	//If run is finished then run buffer value is an empty string
-				runBuff[minI] = "";
-			}
-		} while (!isEmptyArr(runBuff, size));	//Continue looping until all runs are finished
+			runBuff[i].setSize(buffSize);
+		}
+		else
+		{
+			runBuff[i].setSize(eofLine);
+		}
+		record = readData(inFile, calcLineNum(runBuff[i], buffSize));	//Read record from file
+		runBuff[i].setValue(record);	//Set run value
 	}
-	ofs.close();
-	ifs.close();
+	heap<Run<std::string>, Comp<Run<std::string>>>* runHeap = 
+		new heap<Run<std::string>, Comp<Run<std::string>>>(runBuff, size, size);	//Build heap of runs
+
+	while (runHeap->size() != 0)	//Run until heap is empty
+	{
+			//std::cout << "_____________________" << std::endl;		//Delete when done testing
+		Run<std::string>* min = runHeap->getValue(0);	//Store pointer to heap root
+		writeData(outFile, min->getValue());	//Write value of smallest run value to file
+			//std::cout << min->getValue() << std::endl;	//Delete when done testing
+			//printHeap(runHeap, runHeap->size());			//Delete when done testing
+			//std::cout << std::endl << std::endl;			//Delete when done testing
+		min->incIndex();	//Increase index of smallest run value
+		if (min->isDone())	
+		{
+			runHeap->removefirst();
+			if (runHeap->size() == 0)
+			{
+				break;
+			}
+		}
+		record = readData(inFile, calcLineNum(min, buffSize));
+		min->setValue(record);
+		runHeap->siftdown(0);
+	}
 	delete[] runBuff;
-	delete[] runStart;
+}
+
+template<typename E>
+void printHeap(heap<E, Comp<E>>* heap, int size) {	//Prints a heap
+	for (int i = 0; i < size; i++) {
+		heap->getVal(i).print();
+	}
+}
+
+template<typename E>
+inline int calcLineNum(Run<E> r, int buffSize)
+{
+	return buffSize * r.getNum() + r.getInd() + 1;
+}
+
+template<typename E>
+inline int calcLineNum(Run<E> *r, int buffSize)
+{
+	return buffSize * r->getNum() + r->getInd() + 1;
 }
 
 template<typename E>
@@ -244,39 +290,11 @@ inline void initializeArr(E a[], int size) {	//Initiates array with value 0
 	}
 }
 
-inline std::fstream& goToLine(std::fstream& file, int num) {
+inline std::ifstream& goToLine(std::ifstream& file, int num) {
 	//Sets the seek pointer of file to the beginning of line num
 	file.seekg(std::ios::beg);
 	for (int i = 0; i < num - 1; i++) {
 		file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	}
 	return file;
-}
-
-inline int minIndex(std::string *arr, int size)	//returns index of smallest element in array
-{
-	std::string smallest = "ZZZZZZZZZZZZZZZZZ";
-	int index = 0;
-
-	for (int i = 0; i < size; i++)
-	{
-		if (arr[i] < smallest && arr[i] != "")
-		{
-			smallest = arr[i];
-			index = i;
-		}
-	}
-	return index;
-}
-
-inline bool isEmptyArr(std::string *arr, int size)
-{
-	for (int i = 0; i < size; i++)
-	{
-		if (arr[i] != "")
-		{
-			return false;
-		}
-	}
-	return true;
 }
