@@ -218,7 +218,7 @@ inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int 
 		{ 
 			goToLine(ifs, buffSize * i + 1);
 			runBuff[i].setNum(i);
-			if (i < (size - 1))
+			if (i < (size - 1) || eofLine== 0)
 			{
 				runBuff[i].setSize(buffSize);
 			}
@@ -231,24 +231,28 @@ inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int 
 		}
 		heap<Run<std::string>, Comp<Run<std::string>>>* runHeap = new heap<Run<std::string>, Comp<Run<std::string>>>(runBuff, size, size);
 
-		do
+		while(runHeap->size()!=0)
 		{
 			//std::cout << "_____________________" << std::endl;		//Delete when done testing
 			Run<std::string>* min = runHeap->getValue(0);
 			writeData(outFile,min->getValue());
+			std::cout << min->getValue() << std::endl;
 			printHeap(runHeap, runHeap->size());
 			std::cout << std::endl << std::endl;
 			min->incIndex();
 			if (min->isDone())
 			{
 				runHeap->removefirst();
+				if (runHeap->size() == 0)
+				{
+					break;
+				}
 			}
 			goToLine(ifs, buffSize*min->getNum() + min->getInd() + 1);
 			ifs >> record;
-			std::cout << record << std::endl;
 			min->setValue(record);
 			runHeap->siftdown(0);
-		} while (runHeap->size()!= 0);	//Continue looping until all runs are finished
+		} 	
 	}
 	ofs.close();
 	ifs.close();
