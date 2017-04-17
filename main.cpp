@@ -23,10 +23,9 @@
 #include "Comp.cpp"
 #include "qsortop.cpp"
 
-
 int THRESHOLD2 = 8;
 bool done = false;
-int eofLine = 3;
+int eofLine = 10000;
 int numRuns = 0;
 
 template<typename E>
@@ -36,8 +35,9 @@ inline void clearData(std::string fileName);
 inline void genRandFile(std::string fileName, int lines);
 inline std::string readData(std::string fileName, std::streamoff start);
 inline std::streamoff readData(std::string fileName, std::string *inBuff, std::streamoff start, int size);
-template<typename E> inline std::ofstream& writeData(std::ofstream& ofs, E output);
-template<typename E> inline void writeData(std::string fileName, E output);
+template<typename E> inline void writeData(std::ofstream& ofs, E output);
+template<typename E> inline void writeData(std::ofstream& ofs, E *outBuff, int size);
+//template<typename E> inline void writeData(std::string fileName, E output);
 template<typename E> inline void writeData(std::string fileName, E *outBuff, int size);
 template<typename E> inline void printArr(E a[], int size);
 template<typename E> inline void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize);
@@ -48,14 +48,14 @@ inline std::streamoff goToLine(std::string fileName, std::streamoff start, int l
 int main()
 {
 	srand((unsigned)time(0));
-	int bufferSize = eofLine, heapSize = 3;
+	int heapSize = eofLine, bufferSize = heapSize;
 	std::streamoff start;
 	std::string inputFile = "RandomData.txt", preMrgFile = "PreMerge.txt", mergeFile = "SortedData.txt";
 	std::string *heapArr = new std::string[heapSize];
 
 	clearData(preMrgFile);	//Clear output file
 	clearData(mergeFile);	//Clear output file
-	genRandFile(inputFile, 10);	//Generate input file
+	genRandFile(inputFile, 100000);	//Generate input file
 	start = readData(inputFile, heapArr, 0, heapSize);	//Read data into heap array
 		//std::cout << "start __________________" << start << std::endl;
 	heap<std::string, Comp<std::string>>* minHeap = new heap<std::string, Comp<std::string>>(heapArr, heapSize, heapSize);
@@ -133,7 +133,6 @@ inline std::streamoff readData(std::string fileName, std::string *inBuff, std::s
 				done = true;
 				break;	//Stop recording into input buffer
 			}
-			
 		}
 		pos = ifs.tellg();
 		//getline(ifs, eofTest);
@@ -147,11 +146,23 @@ inline std::streamoff readData(std::string fileName, std::string *inBuff, std::s
 }
 
 template<typename E>
-inline std::ofstream& writeData(std::ofstream& ofs, E output){
+inline void writeData(std::ofstream& ofs, E output)
+{	//Writes data to file
 	ofs << output << std::endl;
-	return ofs;
 }
 
+template<typename E>
+inline void writeData(std::ofstream& ofs, E *outBuff, int size)
+{	//Writes array to file
+	if (ofs.is_open())
+	{
+		for (int i = 0; i < size; i++)
+		{
+			ofs << outBuff[i] << std::endl;
+		}
+	}
+}
+/*
 template<typename E>
 inline void writeData(std::string fileName, E output)
 {	//Writes data to file
@@ -162,7 +173,7 @@ inline void writeData(std::string fileName, E output)
 		ofs << output << std::endl;
 	}
 	ofs.close();
-}
+}*/
 
 template<typename E>
 inline void writeData(std::string fileName, E *outBuff, int size)
@@ -189,6 +200,7 @@ inline void printArr(E a[], int size) {	//Prints an array	//Delete when done tes
 template<typename E>
 inline void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
 {
+	std::ofstream ofs(inFile, std::ios::out | std::ios::app);
 	E *inBuff = new E[buffSize];
 	E *outBuff = new E[buffSize];
 	int heapSize = minHeap->size();
@@ -215,6 +227,7 @@ inline void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* mi
 				minHeap->removefirst();	//Else place root at end and reduce heap size
 			}
 		}
+		//writeData(ofs, outBuff, eofLine);	//Write output buffer to file
 		writeData(outFile, outBuff, eofLine);	//Write output buffer to file
 
 			//std::cout << "HeapSIZE______________________" << minHeap->size() << std::endl;
@@ -232,6 +245,7 @@ inline void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* mi
 	//std::cout << numRuns << "numRuns___________________________________" << std::endl;		//Delete when done testing
 	delete[] inBuff;
 	delete[] outBuff;
+	ofs.close();
 }
 
 inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int heapSize, int numRuns)	//Temporarily using quicksort for testing
