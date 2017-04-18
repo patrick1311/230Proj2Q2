@@ -1,5 +1,4 @@
 #include <fstream>
-
 // Run class
 template <typename E> class Run {
 private:
@@ -60,7 +59,7 @@ public:
 	{
 		return value < R2.value;
 	}
-
+	/*
 	void print()
 	{
 		std::cout << "Num: " << num << std::endl;
@@ -69,5 +68,5 @@ public:
 		std::cout << "Value: " << value << std::endl;
 		std::cout << "Pos: " << position << std::endl;
 		std::cout << std::endl;
-	}
+	}*/
 };

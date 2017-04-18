@@ -18,12 +18,11 @@
 #include <limits>	//GoToLine
 #include "heap.h"
 #include "Run.cpp"
-#include "Comp.cpp"
 #include "qsortop.cpp"
 
 int THRESHOLD2 = 8;
 bool done = false;
-int eofLine = 10000;
+int eofLine = 20000;
 int numRuns = 0;
 
 inline void clearData(std::string fileName);
@@ -33,7 +32,7 @@ inline std::streamoff readData(std::ifstream& ifs, std::string *inBuff, std::str
 template<typename E> inline void writeData(std::ofstream& ofs, E output);
 template<typename E> inline void writeData(std::ofstream& ofs, E *outBuff, int size);
 template<typename E> inline void printArr(E a[], int size);
-template<typename E> inline void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize);
+template<typename E> inline void repSel(std::string inFile, std::string outFile, heap<E>* minHeap, std::streamoff start, int buffSize);
 inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int heapSize, int numRuns);
 inline std::streamoff goToLine(std::ifstream& ifs, std::streamoff start, int lines);
 
@@ -49,29 +48,29 @@ int main()
 
 	clearData(preMrgFile);	//Clear output file
 	clearData(mergeFile);	//Clear output file
-	std::cout << "Generating random file with " << fileSize << "records" << std::endl;
+	std::cout << "Generating random file with " << fileSize << " records" << std::endl;
 	genRandFile(inputFile, fileSize);	//Generate input file
 	std::cout << "\t" << inputFile << " created" << std::endl;
 	start = readData(ifs, heapArr, start, heapSize);	//Read data into heap array
 		//std::cout << "start __________________" << start << std::endl;
-	heap<std::string, Comp<std::string>>* minHeap = new heap<std::string, Comp<std::string>>(heapArr, heapSize, heapSize);
+	heap<std::string>* minHeap = new heap<std::string>(heapArr, heapSize, heapSize);
 		//std::cout << "heap___________________________________" << std::endl;	//Delete when done testing
 		//printArr(heapArr, heapSize);											//Delete when done testing
-	std::cout << "Starting replacement selection" << std::endl;
 	repSel<std::string>(inputFile, preMrgFile, minHeap, start, bufferSize);
 	qsortO(heapArr, heapSize);
 		//std::cout << "heap___________________________________" << std::endl;	//Delete when done testing
 		//printArr(heapArr, heapSize);											//Delete when done testing
 	writeData(ofs, heapArr, heapSize);	//Write array to output file
+	ifs.close();
+	ofs.close();
+	std::cout << "Starting replacement selection" << std::endl;
 	std::cout << "\t" << preMrgFile << " created" << std::endl;
 	std::cout << "Starting multiway merge" << std::endl;
 	multiMrg(preMrgFile, mergeFile, bufferSize, heapSize, numRuns);	//Merge output buffers together
 	std::cout << "\t" << mergeFile << " created" << std::endl;
 
-	ifs.close();
-	ofs.close();
-	std::string wait;
-	std::cin >> wait;	//Pause console after program finishes
+	//std::string wait;
+	//std::cin >> wait;	//Pause console after program finishes
 	return 0;
 }
 
@@ -153,7 +152,7 @@ inline void printArr(E a[], int size) {	//Prints an array	//Delete when done tes
 }*/
 
 template<typename E>
-inline void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* minHeap, std::streamoff start, int buffSize)
+inline void repSel(std::string inFile, std::string outFile, heap<E>* minHeap, std::streamoff start, int buffSize)
 {
 	std::ifstream ifs(inFile);
 	std::ofstream ofs(outFile, std::ios::out | std::ios::app);
@@ -184,7 +183,6 @@ inline void repSel(std::string inFile, std::string outFile, heap<E, Comp<E>>* mi
 			}
 		}
 		writeData(ofs, outBuff, eofLine);	//Write output buffer to file
-
 			//std::cout << "HeapSIZE______________________" << minHeap->size() << std::endl;
 		minHeap->setHeapSize(heapSize);	//Rebuild heap
 		minHeap->buildHeap();
@@ -235,8 +233,7 @@ inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int 
 			start = goToLine(ifs, start, heapSize);
 		}
 	}
-	heap<Run<std::string>, Comp<Run<std::string>>>* runHeap = 
-		new heap<Run<std::string>, Comp<Run<std::string>>>(runBuff, size, size);	//Build heap of runs
+	heap<Run<std::string>>* runHeap = new heap<Run<std::string>>(runBuff, size, size);	//Build heap of runs
 
 	while (runHeap->size() != 0)	//Run until heap is empty
 	{
