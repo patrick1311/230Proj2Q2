@@ -1,11 +1,5 @@
-// From the software distribution accompanying the textbook
-// "A Practical Introduction to Data Structures and Algorithm Analysis,
-// Third Edition (C++)" by Clifford A. Shaffer.
-// Source code Copyright (C) 2007-2011 by Clifford A. Shaffer.
-//#include "Comp.cpp"
 #include <assert.h>
 #include "swap.cpp"
-#pragma once
 
 // Heap class
 template <typename E, typename Comp> class heap {
