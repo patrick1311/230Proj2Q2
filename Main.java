@@ -13,17 +13,14 @@ public class Main {
 		String data;
 		double time = System.nanoTime();
 		
-		
 		while(in.hasNext()){
 			
 			data = in.next();
 			
-			if(!list.isInList(data)){
+			if(!list.isInList(data))
 				list.append(data);
-				list.accessCount(data);	//use accessCount, accessMTF, accessTranspose
-			}
-			else
-				list.accessCount(data);
+
+			list.accessCount(data);
 		}
 		
 		time = System.nanoTime() - time;

@@ -98,9 +98,12 @@ public class LList<E>{
 	
 	public boolean isInList(E data){
 		curr = head;
-		for(; curr.next != null; curr = curr.next){
+		while(curr.next != null){
+			
 			if(curr.next.element.equals(data))
 				return true;
+			
+			curr = curr.next;
 		}
 		return false;
 	}
@@ -172,6 +175,7 @@ public class LList<E>{
 				if(curr == head) 	//no swap if access first node
 					break;
 				
+				//swap or transpose with prev node
 				temp = curr.next;
 				curr.next = temp.next;
 				temp.next = curr;
