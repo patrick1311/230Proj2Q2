@@ -20,7 +20,7 @@
 #include "Run.cpp"
 #include "qsortop.cpp"	//Quicksort to sort heap array
 
-int THRESHOLD2 = 8;
+int THRESHOLD = 8;
 bool done = false;
 int eofLine = 200000;
 int numRuns = 0;
@@ -167,9 +167,8 @@ inline void repSel(std::string inFile, std::string outFile, heap<E>* minHeap, st
 				minHeap->setHeapSize(heapSize);
 				minHeap->buildHeap();
 			}
-
-			outBuff[j] = minHeap->getVal(0);	//Send root to heap buffer
-			minHeap->setVal(0, inBuff[j]);	//Set root to input buffer value
+			outBuff[j] = minHeap->getVal(0);	//Send root's value to heap buffer
+			minHeap->setVal(0, inBuff[j]);	//Set root's value to input buffer's value
 			if (inBuff[j] > outBuff[j])
 			{
 				minHeap->siftdown(0);	//Siftdown root
@@ -204,7 +203,7 @@ inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int 
 
 	for (int i = 0; i < size; i++)	//Build initial array of runs for heap
 	{
-		runBuff[i].setNum(i);	//Set run numbers
+		//runBuff[i].setNum(i);	//Set run numbers
 		runBuff[i].setPos(start);
 		record = readData(ifs, start);	//Read record from file
 		runBuff[i].setVal(record);	//Set run value

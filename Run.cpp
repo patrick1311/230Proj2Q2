@@ -2,22 +2,19 @@
 // Run class
 template <typename E> class Run {
 private:
-	int num;
-	int index;
-	int size;
-	E value;
-	std::streamoff position;
+	int index;	//Index of record in run
+	int size;	//Number of records in run
+	E value;	//Value of record at index number
+	std::streamoff position;	//Position of record in file
 
 public:
 	Run() { index = 0; }
-	Run(int n, E val)     // Constructor
+	Run(int ind, int s, E val, std::streamoff pos)     // Constructor
 	{
-		num = n;
+		index = ind;
+		size = s;
 		value = val;
-	}
-	inline int getNum()
-	{
-		return num;
+		position = pos;
 	}
 	inline int getInd()
 	{
@@ -30,10 +27,6 @@ public:
 	inline std::streamoff getPos()
 	{
 		return position;
-	}
-	inline void setNum(int n)
-	{
-		num = n;
 	}
 	inline void incInd()
 	{
@@ -62,7 +55,7 @@ public:
 	/*
 	void print()
 	{
-		std::cout << "Num: " << num << std::endl;
+		//std::cout << "Num: " << num << std::endl;
 		std::cout << "Index: " << index << std::endl;
 		std::cout << "Size: " << size << std::endl;
 		std::cout << "Value: " << value << std::endl;

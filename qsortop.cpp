@@ -1,4 +1,4 @@
-extern int THRESHOLD2;
+extern int THRESHOLD;
 // Insertion sort for final cleanup sort pass
 template <typename E>
 inline void inssort4(E A[], int n) { // Insertion Sort
@@ -56,11 +56,11 @@ void qsortop(E array[], int i, int j) {
 	array[j] = temp;
 
     // Load up stack.  l is pivot point.
-    if ((l-1-i) > THRESHOLD2) {
+    if ((l-1-i) > THRESHOLD) {
       stack[++top] = i;
       stack[++top] = l-1;
     }
-    if ((j-l-1) > THRESHOLD2) {
+    if ((j-l-1) > THRESHOLD) {
       stack[++top] = l+1;
       stack[++top] = j;
     }
