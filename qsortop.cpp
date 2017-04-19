@@ -1,4 +1,5 @@
-extern int THRESHOLD;
+const int THRESHOLD = 8;
+
 // Insertion sort for final cleanup sort pass
 template <typename E>
 inline void inssort4(E A[], int n) { // Insertion Sort
