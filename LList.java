@@ -64,24 +64,26 @@ public class LList<E>{
 			tail = tail.next;
 	}
 	
-	public void print(){
+	public void printList(){
 		
 		curr = head;
-		
-		System.out.printf("%-12s", "List: ");
+		System.out.printf("%-12s", "Final list: ");
 		for(int i = 0; i < size; i++){
 			System.out.print(curr.next.element + " ");
 			curr = curr.next;
 		}	
-		System.out.println();
-		
+		System.out.println();	
+	}
+	
+	public void printFreq(){
+
 		curr = head;
 		System.out.printf("%-12s", "Frequency: ");
 		for(int i = 0; i < size; i++){
 			System.out.print(curr.next.freq + " ");
 			curr = curr.next;
 		}
-		System.out.println("\n");
+		System.out.println();
 	}
 	
 	public E getValue(){
