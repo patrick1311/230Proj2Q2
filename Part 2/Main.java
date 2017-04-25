@@ -1,6 +1,7 @@
 /*
  * Self organizing list: Count, Move to front, Transpose
  */
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -8,9 +9,9 @@ import java.io.IOException;
 import java.util.Random;
 
 public class Main {
-	public static void main(String args[]) throws IOException, InterruptedException{	
+	public static void main(String args[]) throws IOException{	
 		Random rand = new Random();
-		File file = new File("text.txt");
+		File file = new File("src/text.txt");
 		FileWriter out = new FileWriter(file);
 		FileReader in = new FileReader(file);
 		
@@ -23,18 +24,35 @@ public class Main {
 			arr[i] = (char) (rand.nextInt(26) + 65);	//generate random A-Z
 			out.write(arr[i]);
 		}
-
-		//read text into array 
-		while(in.read() != -1){
-			in.read(arr);	
-		}
 		
+		//read text into array 
+		in.read(arr);	
+		
+		//Start and warm up JIT and JVM to measure run time more accurately
+		warmUp(arr);
+		System.out.println("Above method is called to warm up JVM timer!\n");
+		
+		//3 types of self-organizing lists
 		count(countList, arr);
 		MTF(MTFList, arr);
 		transpose(transposeList, arr);
 		
 		out.close();
 		in.close();
+	}
+	
+	public static void warmUp(char[] a){
+		
+		long time = System.nanoTime();
+		LList<Character> test = new LList<Character>();
+
+		for(int i = 0; i < a.length; i++){		
+			if(!test.isInList(a[i]))
+				test.append(a[i]);
+			test.accessCount(a[i]);
+		}
+		time = System.nanoTime() - time;
+		System.out.println("Warm up time: " + time + " nanoseconds");
 	}
 	
 	public static void count(LList<Character> list, char[] a){
