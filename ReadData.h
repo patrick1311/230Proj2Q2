@@ -7,10 +7,10 @@ private:
 	std::streamoff pos;
 public:
 	ReadData(){}
-	ReadData(int line, int p)
+	ReadData(int line)
 	{
 		eofLine = line;
-		pos = p;
+		pos = 0;
 		done = false;
 		numRuns = 0;
 	}
@@ -47,4 +47,3 @@ public:
 		return numRuns;
 	}
 };
-

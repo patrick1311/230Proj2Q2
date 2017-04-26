@@ -1,23 +1,19 @@
-//To do list: <-----------------LOOK HERE!
-//1.get rid of global variables, (make class?)
-//2.determine numRuns for multimerge
-//3.test on larger sized buffers & heap; determine buffer/heap size
-//4.answer prompt questions 
-//5.clean up code: find more efficient/better methods, make code modular if possible, make coding style consistent, split functions into separate files? etc.
-//6.write comments
-//7.make beautiful graphs
-//8.find fourth group member
-//11.delete any unecessary testing code
-//12.inline functions to speed up program
-//13.speed up run
+/*
+Project Name: Replacement Selection (main.cpp)
+Programmer Names: Justin Lin, Princeton Wong, Patrick Quach
+Class: CSCI 230
+Project Number: 2
+Date: 4/26/2017
+Project Description: This application runs replacement selection as an external sort on a randomly generated textfile.
+*/
 
-#include <iostream>		//
+#include <iostream>		//cout
 #include <fstream>		//ifstream & ofstream
-#include <string>
+#include <string>		//string
 #include <chrono>		//time
 #include <limits>		//GoToLine
 #include "heap.h"
-#include "Run.cpp"
+#include "Run.cpp"	
 #include "qsortop.cpp"	//Quicksort to sort heap array
 #include "ReadData.h"
 
@@ -27,7 +23,6 @@ inline std::string readData(std::ifstream& ifs, std::streamoff start);
 inline ReadData* readData(std::ifstream& ifs, std::string *inBuff, ReadData* status, int size);
 template<typename E> inline void writeData(std::ofstream& ofs, E output);
 template<typename E> inline void writeData(std::ofstream& ofs, E *outBuff, int size);
-//template<typename E> inline void printArr(E a[], int size);
 template<typename E> inline void repSel(std::string inFile, std::string outFile, heap<E>* minHeap, ReadData* status, int buffSize);
 inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int heapSize, ReadData* data);
 inline std::streamoff goToLine(std::ifstream& ifs, std::streamoff start, int lines);
@@ -35,9 +30,9 @@ inline std::streamoff goToLine(std::ifstream& ifs, std::streamoff start, int lin
 int main()
 {
 	srand((unsigned)time(0));
-	ReadData a(7,0);
+	ReadData a(20);
 	ReadData* status = &a;
-	int fileSize = 21, heapSize = status->getEofLine(), bufferSize = heapSize;
+	int fileSize = 50, heapSize = status->getEofLine(), bufferSize = heapSize;
 	std::string inputFile = "RandomData.txt", preMrgFile = "PreMerge.txt", mergeFile = "SortedData.txt";
 	std::string *heapArr = new std::string[heapSize];
 	std::ifstream ifs(inputFile);
@@ -62,8 +57,8 @@ int main()
 	multiMrg(preMrgFile, mergeFile, bufferSize, heapSize, status);	//Merge output buffers together
 	std::cout << "\t" << mergeFile << " created" << std::endl;
 
-	//std::string wait;
-	//std::cin >> wait;	//Pause console after program finishes
+	std::string wait;
+	std::cin >> wait;	//Pause console after program finishes
 	return 0;
 }
 
@@ -133,13 +128,6 @@ inline void writeData(std::ofstream& ofs, E *outBuff, int size)
 		ofs << outBuff[i] << std::endl;
 	}
 }
-/*
-template<typename E>
-inline void printArr(E a[], int size) {	//Prints an array	//Delete when done testing?
-	for (int i = 0; i < size; i++) {
-		std::cout << a[i] << std::endl;
-	}
-}*/
 
 template<typename E>
 inline void repSel(std::string inFile, std::string outFile, heap<E>* minHeap, ReadData* status, int buffSize)
@@ -222,9 +210,6 @@ inline void multiMrg(std::string inFile, std::string outFile, int buffSize, int 
 	{
 		Run<std::string>* min = runHeap->getValue(0);	//Store pointer to heap root
 		writeData(ofs, min->getVal());
-			//std::cout << min->getVal() << std::endl;	//Delete when done testing
-			//printHeap(runHeap, runHeap->size());			//Delete when done testing
-			//std::cout << std::endl << std::endl;			//Delete when done testing
 		min->incInd();	//Increase index of smallest run value
 		start = goToLine(ifs, min->getPos(), 1);	//Set start to the position of the next line from the root's position
 		min->setPos(start);	//Set root's position to start
